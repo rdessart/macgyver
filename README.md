@@ -11,3 +11,15 @@ Be careful, for once the bad guy can shoot ;). If you get on the same case
 as the gardian without the syringe, MacGyver will die ! Patty and Selma will be devastated...
 
 ![simpsons patty & selma](https://www.throwbacks.com/content/images/2017/01/2201685994-3.gif)
+
+## Usage
+1. Create and/or open a virtual environement
+1. Load all the dependency with pip install -r requirement.txt
+1. Start with python main.py -f ./resources/levels/level0.lvl
+1. Enjoy
+
+### Command line arguments
+| short | long | description |
+--------|------|-------------|
+| -h | --help | show help |
+| -i | --input | select a level file to be loaded|
