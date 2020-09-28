@@ -20,3 +20,9 @@ Be careful, for once the bad guy can shoot ;). If you get on the same location a
 --------|------|-------------|
 | -h | --help | show help |
 | -i | --input | select a level file to be loaded|
+
+## Algorithm
+### UML Classes
+![UML Description of classes](https://app.lucidchart.com/publicSegments/view/c50dfbb4-4e73-4007-abc5-eddff51634ce/image.jpeg)
+### Loading Maze
+![Diagram of how to load the maze](https://app.lucidchart.com/publicSegments/view/92c21854-e51c-454b-ae15-d25749daecee/image.jpeg)
