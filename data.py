@@ -1,6 +1,6 @@
 """Storing all the non GUI data type"""
 
-# import logging as log
+import logging as log
 
 class Drawable():
     """Reprensting any displayed element"""
@@ -85,9 +85,75 @@ class MazeObject(Drawable):
         return self._value == 1
 
 
+class Maze():
+    """Reprensente the whole maze"""
+    #special methods
+    def __init__(self):
+        """Constructor"""
+        self.maze_data = []
+        self._iteratorPos = [0, -1]
+
+    def __str__(self):
+        """Implement str()"""
+        output_string = ""
+        for row in self.maze_data:
+            for case in row:
+                output_string += "{} ".format(case.value)
+            output_string.split(' ')
+            output_string += '\n'
+        return output_string
+    
+    def __getitem__(self, position):
+        """Implement [y, x]"""
+        return self.maze_data[position[0]][position[1]]
+    
+    def __iter__(self):
+        """Implement this class as an iterable"""
+        return self
+    
+    def __next__(self):
+        """Implement an iterator to go throught all the maze"""
+        self._iteratorPos[1] += 1
+        if self._iteratorPos[1] >= len(self.maze_data[self._iteratorPos[0]]):
+            self._iteratorPos[0] += 1
+            self._iteratorPos[1] = 0
+        
+        if self._iteratorPos[0] >= len(self.maze_data):
+            raise StopIteration
+        return self.maze_data[self._iteratorPos[0]][self._iteratorPos[1]]
+
+    #protected methods:
+    def _parse_line(self, line_data: tuple):
+        """[Protected] Parse a line of the maze, input is (line_num, line)"""
+        line_value = (char for char in line_data[1] if char != '\n')
+        maze_line = []
+        for row_data in enumerate(line_value):
+            if not row_data[1].isnumeric():
+                continue
+            maze_line.append(MazeObject(int(row_data[1]),
+                                        [row_data[0],
+                                        line_data[0]]))
+        self.maze_data.append(maze_line)
+
+    #public mehtods: 
+    def load_from_file(self, filepath: str):
+        """Load the maze for a level file."""
+        try:
+            with open(filepath, 'r') as file_in:
+                log.debug("File %s loaded sucessfully!", filepath)
+                for line_data in enumerate(file_in):
+                    self._parse_line(line_data)
+        except FileNotFoundError as exception:
+            log.critical("Specified file not found!\n%s", exception)
+            return
+        
+
 if __name__ == "__main__":
-    obj = MazeObject(0, [0, 0])
-    obj.value = 1
-    obj.position = (5, 4)
-    obj.position = [2, 0]
-    print(obj)
+    from os import path
+    log.basicConfig(level=log.DEBUG)
+    maze = Maze()
+    maze.load_from_file(path.join(path.dirname(__file__),
+                                  "resources\\levels\\level0.lvl"))
+    for i in maze:
+        print(i)
+    
