@@ -12,7 +12,7 @@ Be careful, for once the bad guy can shoot ;). If you get on the same location a
 ## Usage
 1. Create and/or open a virtual environment.
 1. Load all the dependency with `pip install -r requirement.txt`.
-1. Start with `python main.py -f ./resources/levels/level0.lvl`.
+1. Start with `python main.py -i ./resources/levels/level0.lvl`.
 1. Enjoy
 
 ### Command line arguments
@@ -23,6 +23,6 @@ Be careful, for once the bad guy can shoot ;). If you get on the same location a
 
 ## Algorithm
 ### UML Classes
-![UML Description of classes](https://app.lucidchart.com/publicSegments/view/c50dfbb4-4e73-4007-abc5-eddff51634ce/image.jpeg)
+[UML Description of classes](https://app.lucidchart.com/publicSegments/view/c50dfbb4-4e73-4007-abc5-eddff51634ce/image.jpeg)
 ### Loading Maze
-![Diagram of how to load the maze](https://app.lucidchart.com/publicSegments/view/92c21854-e51c-454b-ae15-d25749daecee/image.jpeg)
+[Diagram of how to load the maze](https://app.lucidchart.com/publicSegments/view/92c21854-e51c-454b-ae15-d25749daecee/image.jpeg)
