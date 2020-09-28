@@ -23,6 +23,7 @@ def main():
     filepath = path.join(path.dirname(__file__), args.input)
     maze = data.Maze()
     maze.load_from_file(filepath)
+    print(maze)
 
 if __name__ == "__main__":
     main()
