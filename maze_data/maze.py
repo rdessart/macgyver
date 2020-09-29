@@ -7,6 +7,7 @@ from random import choice
 import logging as log
 
 from .maze_object import MazeObject
+from .drawable import Drawable
 
 class Maze():
     """Reprensente the whole maze"""
