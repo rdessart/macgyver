@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+# !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """Module to handle the maze"""
@@ -8,9 +8,10 @@ import logging as log
 
 from .maze_object import MazeObject
 
+
 class Maze():
     """Reprensente the whole maze"""
-    #special methods
+    # Special methods:
     def __init__(self):
         """Constructor"""
         self.maze_data = []
@@ -26,7 +27,7 @@ class Maze():
             output_string += '\n'
         return output_string
 
-    def __getitem__(self, position)-> MazeObject:
+    def __getitem__(self, position) -> MazeObject:
         """
         Implement getitem(x, y) and getitem(pos):
         If getitem is a list, we return [y][x]
@@ -62,11 +63,11 @@ class Maze():
             raise StopIteration
         return self.maze_data[self._iterator_pos[0]][self._iterator_pos[1]]
 
-    def __len__(self)-> int:
+    def __len__(self) -> int:
         """Implement len()"""
         return len(self.maze_data) * len(self.maze_data[0])
 
-    #protected methods:
+    # Protected methods:
     def _parse_row(self, row_data: tuple):
         """[Protected] Parse a line of the maze, input is (line_num, line)"""
         column_value = (char for char in row_data[1] if char != '\n')
@@ -79,8 +80,8 @@ class Maze():
                                          column_data[0]]))
         self.maze_data.append(maze_line)
 
-    #public mehtods:
-    def load_from_file(self, filepath: str)-> bool:
+    # Public mehtods:
+    def load_from_file(self, filepath: str) -> bool:
         """
         Load the maze for a level file.
         The function return True if the file is found and readable, else it
@@ -105,7 +106,7 @@ class Maze():
             item = objects_list.pop(0)
             self.pickup_empty_space().value = item
 
-    def pickup_empty_space(self) ->list:
+    def pickup_empty_space(self) -> list:
         """Return a free (value = 0) cell"""
         selected_block = choice(self)
         while selected_block.value != 0:

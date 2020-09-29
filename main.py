@@ -8,39 +8,43 @@ import argparse
 import logging as log
 
 import maze_data.maze as maze
-import maze_data.maze_object as maze_obj
 import player
 
 log.basicConfig(level=log.DEBUG)
 
+
 def clear_cmd_screen():
     """Clear the screen of the console"""
-    if os.name == 'nt': #windows:
+    if os.name == 'nt':  # Windows
         os.system('cls')
     else:
         os.system('clr')
 
+
 def parse_cmd_line_arguments():
     """Parse the arguments and return them"""
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input",help="the path to"
+    parser.add_argument("-i", "--input", help="the path to"
                         " the level file to be loaded")
     return parser.parse_args()
 
-def display(player: player.Player, maze: maze.Maze):
+
+def display(the_player: player.Player, the_maze: maze.Maze):
     """Clear the screen, display the owned items and the maze"""
     clear_cmd_screen()
-    print(player.display_owned_items())
-    print(maze)
+    print(the_player.display_owned_items())
+    print(the_maze)
 
-def main()-> int:
+
+def main() -> int:
     """Program entry point"""
     args = parse_cmd_line_arguments()
     filepath = ""
     if args.input is None:
         filepath = "./resources/levels/level0.lvl"
     else:
-        filepath = os.path.join(path.dirname(__file__), args.input)
+        filepath = os.path.join(os.path.dirname(__file__),
+                                args.input)
     my_maze = maze.Maze()
     if not my_maze.load_from_file(filepath):
         return 1
@@ -68,9 +72,10 @@ def main()-> int:
     mac_gyver.own_object.sort()
     if mac_gyver.own_object == [3, 4, 5]:
         print("YOU WIN !!!!")
-    else :
+    else:
         print("YOU LOOSE :( ")
     return 0
+
 
 if __name__ == "__main__":
     main()

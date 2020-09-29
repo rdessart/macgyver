@@ -3,6 +3,7 @@
 
 """Handling drawable object"""
 
+
 class Drawable():
     """Abastract class to reprensent a drawable object"""
 
@@ -20,7 +21,7 @@ class Drawable():
         return ouput_string.format(self.position_xy[0], self.position_xy[1])
 
     @property
-    def position_xy(self)->tuple:
+    def position_xy(self) -> tuple:
         """Return the positon as tuple."""
         return (self.position[1], self.position[0])
 
