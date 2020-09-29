@@ -21,14 +21,20 @@ def clear_cmd_screen():
         os.system('clr')
 
 def parse_cmd_line_arguments():
-    """ parse the arguments and return them"""
+    """Parse the arguments and return them"""
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input",help="the path to"
                         " the level file to be loaded")
     return parser.parse_args()
 
+def display(player: player.Player, maze: maze.Maze):
+    """Clear the screen, display the owned items and the maze"""
+    clear_cmd_screen()
+    print("Owned items : {}".format(player.own_object))
+    print(maze)
+
 def main()-> int:
-    """program entry point"""
+    """Program entry point"""
     args = parse_cmd_line_arguments()
     filepath = ""
     if args.input is None:
@@ -42,9 +48,7 @@ def main()-> int:
     mac_gyver = player.Player()
     mac_gyver.bind_maze(my_maze)
     res = mac_gyver.place(my_maze.pickup_empty_space().position)
-    clear_cmd_screen()
-    print("Owned items : {}".format(mac_gyver.own_object))
-    print(my_maze)
+    display(mac_gyver, my_maze)
     touche = ''
     while touche != 'R' and (res is None or res.value != 2):
         touche = input("[Z/S] - [Q/D] : ")
@@ -59,8 +63,7 @@ def main()-> int:
             res = mac_gyver.move(1, 0)
         if res is not None and res.value in [3, 4, 5]:
             mac_gyver.pickup()
-        print("Owned items : {}".format(mac_gyver.own_object))
-        print(my_maze)
+        display(mac_gyver, my_maze)
     clear_cmd_screen()
     mac_gyver.own_object.sort()
     if mac_gyver.own_object == [3, 4, 5]:
