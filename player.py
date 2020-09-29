@@ -5,7 +5,9 @@
 
 import copy
 
-from maze_data import drawable, maze
+import maze_data.maze_object as maze_obj
+import maze_data.maze as maze
+import maze_data.drawable as drawable
 
 class Player(drawable.Drawable):
     """
@@ -75,7 +77,13 @@ class Player(drawable.Drawable):
         return None
 
     def bind_maze(self, master_maze: maze.Maze):
-        """
-        Give us a reference toward the maze.
-        """
+        """Set a reference toward the maze."""
         self._maze = master_maze
+    
+    def display_owned_items(self)-> str:
+        """Return a string with the formated owned items"""
+        output_string = "Owned Item : "
+        for obj in self.own_object:
+            output_string += "{} ".format(maze_obj.MAZE_OBJECT_TYPE[obj])
+        return output_string
+        
