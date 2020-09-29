@@ -5,7 +5,7 @@
 
 
 class Drawable():
-    """Abastract class to reprensent a drawable object"""
+    """Class to reprensent any drawable object on the maze"""
 
     def __init__(self, position: list):
         """Create a new drawable object, to be place at the given position."""
@@ -28,14 +28,8 @@ class Drawable():
     @position_xy.setter
     def position_xy(self, new_position: list):
         """
-        Set the new position, new_position should be a list of lenght 2,
-        with both X and Y as positive integer.
+        Set the new position.
         """
         if len(new_position) != 2:
             raise ValueError("Position is invalid: should be of size 2 (x, y)")
-        if new_position[0] < 0:
-            raise ValueError("the X value should be positive")
-        if new_position[1] < 0:
-            raise ValueError("the Y value should be positive")
-
         self.position[1], self.position[0] = new_position

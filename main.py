@@ -7,6 +7,7 @@ import os
 import sys
 
 import maze_data.maze as maze
+import maze_data.maze_object as maze_obj
 import player
 
 
@@ -25,38 +26,47 @@ def display(the_player: player.Player, the_maze: maze.Maze):
     print(the_maze)
 
 
-def main(args) -> int:
+def main(args: list) -> int:
     """Program entry point"""
-    filepath = "./resources/levels/level0.lvl"
+    filepath = "./resources/levels/level0.lvl"  # Default value
     if len(args) > 1:
         filepath = os.path.join(os.path.dirname(__file__),
                                 args[1])
+
     my_maze = maze.Maze()
     if not my_maze.load_from_file(filepath):
         return 1
-    my_maze.place_random_object([3, 4, 5])
-    mac_gyver = player.Player()
-    mac_gyver.bind_maze(my_maze)
-    res = mac_gyver.place(my_maze.pickup_empty_space().position)
+    my_maze.place_random_object([maze_obj.MazeObject(3, [0, 0]),  # Needle
+                                 maze_obj.MazeObject(4, [0, 0]),  # Tube
+                                 maze_obj.MazeObject(5, [0, 0])])  # Ether
+
+    mac_gyver = player.Player(my_maze)  # we already bind the maze.
+    start_position = my_maze.pickup_empty_space().position
+    case_value = mac_gyver.place(start_position)
     display(mac_gyver, my_maze)
-    touche = ''
-    while touche != 'R' and (res is None or res.value != 2):
-        touche = input("[Z/S] - [Q/D] : ")
-        clear_cmd_screen()
-        if touche.upper() == 'Z':
-            res = mac_gyver.move(0, -1)
-        elif touche.upper() == 'S':
-            res = mac_gyver.move(0, 1)
-        elif touche.upper() == 'Q':
-            res = mac_gyver.move(-1, 0)
-        elif touche.upper() == 'D':
-            res = mac_gyver.move(1, 0)
-        if res is not None and res.value in [3, 4, 5]:
+    command = ''
+    while command != 'R' and (case_value is None or case_value.value != 2):
+        command = input("[Z/S] - [Q/D] : ")
+        movement = (0, 0)
+        if command.upper() == 'Z':
+            movement = (0, -1)
+        elif command.upper() == 'S':
+            movement = (0, 1)
+        elif command.upper() == 'Q':
+            movement = (-1, 0)
+        elif command.upper() == 'D':
+            movement = (1, 0)
+        case_value = mac_gyver.move(movement[0], movement[1])
+
+        # if we land on a special object, we pick it up
+        if case_value is not None and case_value.value in [3, 4, 5]:
             mac_gyver.pickup()
+        # refresh the screen
         display(mac_gyver, my_maze)
+    # End of the game.
     clear_cmd_screen()
     mac_gyver.own_object.sort()
-    if mac_gyver.own_object == [3, 4, 5]:
+    if mac_gyver.own_object == [3, 4, 5]:  # we have all the items
         print("YOU WIN !!!!")
     else:
         print("YOU LOOSE :( ")
