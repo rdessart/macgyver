@@ -30,7 +30,7 @@ def parse_cmd_line_arguments():
 def display(player: player.Player, maze: maze.Maze):
     """Clear the screen, display the owned items and the maze"""
     clear_cmd_screen()
-    print("Owned items : {}".format(player.own_object))
+    print(player.display_owned_items())
     print(maze)
 
 def main()-> int:
