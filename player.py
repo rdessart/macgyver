@@ -14,41 +14,46 @@ class Player(drawable.Drawable):
     """
     Represent our player
     """
-    def __init__(self):
-        """Constructor"""
+    def __init__(self, the_maze: maze.Maze = None):
+        """
+        Constructor.
+        If a maze is available we save his reference.
+        """
         super().__init__([0, 0])
         self._position = [None, None]
         self.own_object = []
         self._maze = None
         self._old_pos = None
+        if the_maze is not None:
+            self.bind_maze(the_maze)
 
     def pickup(self):
         """
         Add the item under the player to our backpack, and reset the cell
-        to being empty (value = 0)
+        to it's empty value (value = 0)
         """
+        # To avoid a reference copy we explicitly ask python to copy the value
         self.own_object.append(copy.copy(self._old_pos[1].value))
-        title = "Special Object Collected : {}"
-        print(title.format(self._old_pos[1]))
         self._old_pos[1].value = 0
 
     def _is_position_valid(self, position: list) -> bool:
         """Check if the position is valid"""
         if self._maze is None:
             raise ValueError("The maze was not assign")
-        # if self._maze[position].value == 1:
-        #     return False
-        # return True
-        return self._maze[position].is_blocking
+        return not self._maze[position].is_blocking()
 
     def _draw(self):
         """
-        [PROTECTED] position the player on the maze and return the previous
+        [PROTECTED] position the player on the maze and set the previous
         cell to it initial value
         """
+        
         if self._old_pos:
+            # If we have an old value in memory we put it back on the maze
             self._maze[self._old_pos[0]] = self._old_pos[1]
+        # Saving the cells before the player is positionned on it
         self._old_pos = (self.position, self._maze[self.position])
+        # Positionning the player
         self._maze[self.position] = maze.MazeObject(9, self.position)
 
     def move(self, val_x: int, val_y: int) -> list:
@@ -78,11 +83,11 @@ class Player(drawable.Drawable):
         return None
 
     def bind_maze(self, master_maze: maze.Maze):
-        """Set a reference toward the maze."""
+        """Save a reference of the maze."""
         self._maze = master_maze
 
     def display_owned_items(self) -> str:
-        """Return a string with the formated owned items"""
+        """Return a formated string with the items in our backpack"""
         output_string = "Owned Item : "
         for obj in self.own_object:
             output_string += "{} ".format(maze_obj.MAZE_OBJECT_TYPE[obj])

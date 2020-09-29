@@ -23,6 +23,8 @@ class MazeObject(Drawable):
         Create a new MazeObject.
         Value should be an integer reprenstig the type of case, value should
         be as in MAZE_OBJECT_TYPE.
+        Position should be a list of 2 integer representing the position as
+        Row -> Column
         """
         super().__init__(position)
         self._value = value
