@@ -18,7 +18,7 @@ def clear_cmd_screen():
     if os.name == 'nt':  # Windows
         os.system('cls')
     else:
-        os.system('clr')
+        os.system('clear')
 
 
 def parse_cmd_line_arguments():

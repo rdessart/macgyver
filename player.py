@@ -39,7 +39,7 @@ class Player(drawable.Drawable):
         # if self._maze[position].value == 1:
         #     return False
         # return True
-        return self._maze[position].is_blocking
+        return not self._maze[position].is_blocking
 
     def _draw(self):
         """
