@@ -4,13 +4,10 @@
 """main file"""
 
 import os
-import argparse
-import logging as log
+import sys
 
 import maze_data.maze as maze
 import player
-
-log.basicConfig(level=log.DEBUG)
 
 
 def clear_cmd_screen():
@@ -21,14 +18,6 @@ def clear_cmd_screen():
         os.system('clear')
 
 
-def parse_cmd_line_arguments():
-    """Parse the arguments and return them"""
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", help="the path to"
-                        " the level file to be loaded")
-    return parser.parse_args()
-
-
 def display(the_player: player.Player, the_maze: maze.Maze):
     """Clear the screen, display the owned items and the maze"""
     clear_cmd_screen()
@@ -36,15 +25,12 @@ def display(the_player: player.Player, the_maze: maze.Maze):
     print(the_maze)
 
 
-def main() -> int:
+def main(args) -> int:
     """Program entry point"""
-    args = parse_cmd_line_arguments()
-    filepath = ""
-    if args.input is None:
-        filepath = "./resources/levels/level0.lvl"
-    else:
+    filepath = "./resources/levels/level0.lvl"
+    if len(args) > 1:
         filepath = os.path.join(os.path.dirname(__file__),
-                                args.input)
+                                args[1])
     my_maze = maze.Maze()
     if not my_maze.load_from_file(filepath):
         return 1
@@ -78,4 +64,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
