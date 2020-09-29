@@ -5,9 +5,7 @@
 
 from .drawable import Drawable
 
-class MazeObject(Drawable):
-    """Reprensent a case in the maze"""
-    MAZE_OBJECT_TYPE = {
+MAZE_OBJECT_TYPE = {
         0 : "Empty",
         1 : "Wall",
         2 : "Guard",
@@ -15,6 +13,9 @@ class MazeObject(Drawable):
         4 : "Plastic Tube",
         5 : "Ether",
         9 : "MacGyver"}
+
+class MazeObject(Drawable):
+    """Reprensent a case in the maze"""
 
     def __init__(self, value: int, position: list):
         """
@@ -34,7 +35,7 @@ class MazeObject(Drawable):
     def __str__(self)-> str:
         """Return str(self)."""
         output_string = "{} at position {} - {}"
-        return output_string.format(self.MAZE_OBJECT_TYPE[self._value],
+        return output_string.format(MAZE_OBJECT_TYPE[self._value],
                                     self.position[0],
                                     self.position[1])
 
@@ -49,7 +50,7 @@ class MazeObject(Drawable):
         Update the value of the case, value should be contained in
         MAZE_OBJECT_TYPE.
         """
-        if value not in self.MAZE_OBJECT_TYPE.keys():
+        if value not in MAZE_OBJECT_TYPE.keys():
             raise ValueError("Value is not contained in the MAZE_OBJECT_TYPE")
         self._value = value
 

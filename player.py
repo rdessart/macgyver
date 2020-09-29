@@ -33,9 +33,10 @@ class Player(drawable.Drawable):
         """Check if the position is valid"""
         if self._maze is None:
             raise ValueError("The maze was not assign")
-        if self._maze[position].value == 1:
-            return False
-        return True
+        # if self._maze[position].value == 1:
+        #     return False
+        # return True
+        return self._maze[position].is_blocking
 
     def _draw(self):
         """

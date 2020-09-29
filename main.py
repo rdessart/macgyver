@@ -3,8 +3,7 @@
 
 """main file"""
 
-from os import path
-from os import system
+import os
 import argparse
 import logging as log
 
@@ -13,6 +12,13 @@ import maze_data.maze_object as maze_obj
 import player
 
 log.basicConfig(level=log.DEBUG)
+
+def clear_cmd_screen():
+    """Clear the screen of the console"""
+    if os.name == 'nt': #windows:
+        os.system('cls')
+    else:
+        os.system('clr')
 
 def parse_cmd_line_arguments():
     """ parse the arguments and return them"""
@@ -26,25 +32,23 @@ def main()-> int:
     args = parse_cmd_line_arguments()
     filepath = ""
     if args.input is None:
-        filepath = "./resources/levels/level1.lvl"
+        filepath = "./resources/levels/level0.lvl"
     else:
-        filepath = path.join(path.dirname(__file__), args.input)
+        filepath = os.path.join(path.dirname(__file__), args.input)
     my_maze = maze.Maze()
     if not my_maze.load_from_file(filepath):
         return 1
     my_maze.place_random_object([3, 4, 5])
     mac_gyver = player.Player()
     mac_gyver.bind_maze(my_maze)
-    start_block = my_maze.pickup_empty_space()
-    start_pos = start_block.position
-    res = mac_gyver.place(start_pos)
-    system('cls') #windows Powershell ONLY - linux/mac replace with clr
+    res = mac_gyver.place(my_maze.pickup_empty_space().position)
+    clear_cmd_screen()
     print("Owned items : {}".format(mac_gyver.own_object))
     print(my_maze)
     touche = ''
     while touche != 'R' and (res is None or res.value != 2):
         touche = input("[Z/S] - [Q/D] : ")
-        system('cls') #windows Powershell ONLY - linux/mac replace with clr
+        clear_cmd_screen()
         if touche.upper() == 'Z':
             res = mac_gyver.move(0, -1)
         elif touche.upper() == 'S':
@@ -55,15 +59,14 @@ def main()-> int:
             res = mac_gyver.move(1, 0)
         if res is not None and res.value in [3, 4, 5]:
             mac_gyver.pickup()
-        print(mac_gyver.own_object)
+        print("Owned items : {}".format(mac_gyver.own_object))
         print(my_maze)
-    system('cls')
+    clear_cmd_screen()
     mac_gyver.own_object.sort()
     if mac_gyver.own_object == [3, 4, 5]:
         print("YOU WIN !!!!")
     else :
         print("YOU LOOSE :( ")
-
     return 0
 
 if __name__ == "__main__":
