@@ -2,3 +2,4 @@ venv/
 .vscode/
 __pycache__/
 graphics/__pycache__/
+efficiency_debug.py

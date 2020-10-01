@@ -6,7 +6,7 @@
 import os
 import copy
 
-from maze_data import drawable, maze_object, maze, player
+from maze_data import maze, player
 from event import KeyPressedEvent
 import const
 
@@ -18,6 +18,7 @@ class Game():
         """Initalisze"""
         self.main_maze = None
         self.player_one = None
+        self.old_pos = None
         self._action = {}
         self.run = True
         self._initialise_maze(maze_file)
@@ -29,20 +30,39 @@ class Game():
         if not self.main_maze.load_from_file(maze_file):
             raise FileNotFoundError()
         self.main_maze.place_random_object(const.OBJECTS)
-        print(self.main_maze)
+        self.requirement = [obj.value for obj in const.OBJECTS]
+        self.requirement.sort()
 
     def _initialise_player(self) -> None:
         """Initalise the player"""
         self.player_one = player.Player()
         player_pos = self.main_maze.pickup_empty_space()
+        self.old_pos = player_pos
         self.player_one.place(player_pos.position)
+        self.main_maze[self.player_one.position] = self.player_one
 
     def game_loop(self) -> bool:
         """The game loop, return True if player won, else False"""
         while self.run:
-            # self._clear_screen()
             self._draw()
-            self._input_command(const.DEFAULT_INPUT_MSG)
+            self._update()
+        objects = [obj.value for obj in self.player_one.own_object]
+        objects.sort()
+        return objects == self.requirement
+
+    def _update(self) -> None:
+        self.main_maze[self.old_pos.position] = self.old_pos
+        self._input_command(const.DEFAULT_INPUT_MSG)
+        player_case = self.main_maze[self.player_one.position]
+        if player_case.value == 1:
+            self.player_one.position = self.old_pos.position
+        self.old_pos = copy.deepcopy(self.main_maze[self.player_one.position])
+        if player_case.value in self.requirement:
+            self.player_one.pickup(player_case)
+            self.old_pos.value = 0
+        self.run = (player_case.value != 2)
+        self.main_maze[self.old_pos.position] = self.old_pos
+        self.main_maze[self.player_one.position] = self.player_one
 
     def _input_command(self, message: str) -> tuple:
         """Ask user witch direction to go"""
@@ -67,6 +87,4 @@ class Game():
         """Clear the screen, display the owned items and the maze"""
         self._clear_screen()
         print(self.player_one.display_owned_items())
-        background = copy.deepcopy(self.main_maze)
-        background[self.player_one.position] = self.player_one
-        print(background)
+        print(self.main_maze)

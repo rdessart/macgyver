@@ -47,11 +47,8 @@ class MazeObject(Drawable):
     @value.setter
     def value(self, value: int):
         """
-        Update the value of the case, value should be contained in
-        MAZE_OBJECT_TYPE.
+        Update the value of the case
         """
-        if value not in MAZE_DEFAULT_OBJ:
-            raise ValueError("Value is not contained in the MAZE_OBJECT_TYPE")
         self._value = value
 
     def is_blocking(self) -> bool:
