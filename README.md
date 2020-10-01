@@ -12,8 +12,12 @@ Be careful, for once the bad guy can shoot ;). If you get on the same location a
 ## Usage
 1. Create and/or open a virtual environment.
 1. Load all the dependency with `pip install -r requirement.txt`.
-1. Start with `python main.py -i ./resources/levels/level0.lvl`.
+1. Start with `python main.py` to use the default maze file or `python main.py -i [path_to_your_file]`.
 1. Enjoy
+
+## Required Packages
+* Python 3.8 (untested below 3.8)
+
 
 ### Command line arguments
 | short | long | description |
