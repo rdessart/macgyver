@@ -118,6 +118,3 @@ class Maze():
         while selected_block.value != 0:
             selected_block = choice(self)
         return selected_block
-
-    def draw(self, object_draw : Drawable) -> list(list()):
-        """draw objects"""

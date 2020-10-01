@@ -5,14 +5,13 @@
 
 from .drawable import Drawable
 
-MAZE_OBJECT_TYPE = {
-        0: "Empty",
-        1: "Wall",
-        2: "Guard",
-        3: "Needle",
-        4: "Plastic Tube",
-        5: "Ether",
-        9: "MacGyver"}
+MAZE_DEFAULT_OBJ = ["Empty",
+                    "Wall",
+                    "Guard",
+                    "Needle",
+                    "Plastic Tube",
+                    "Ether",
+                    "MacGyver"]
 
 
 class MazeObject(Drawable):
@@ -38,7 +37,7 @@ class MazeObject(Drawable):
     def __str__(self) -> str:
         """Return str(self)."""
         output_string = "{} at position {} - {}"
-        return output_string.format(MAZE_OBJECT_TYPE[self._value],
+        return output_string.format(MAZE_DEFAULT_OBJ[self._value],
                                     self.position[0],
                                     self.position[1])
 
@@ -53,7 +52,7 @@ class MazeObject(Drawable):
         Update the value of the case, value should be contained in
         MAZE_OBJECT_TYPE.
         """
-        if value not in MAZE_OBJECT_TYPE.keys():
+        if value not in MAZE_DEFAULT_OBJ:
             raise ValueError("Value is not contained in the MAZE_OBJECT_TYPE")
         self._value = value
 
