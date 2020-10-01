@@ -49,6 +49,8 @@ class Game():
         command = input(message).upper()
         if(command in self._action):
             self._action[command].execute()
+        elif command == 'R':
+            self.run = False
 
     def bind_action(self, key: str, event: KeyPressedEvent) -> None:
         """Bind action"""
