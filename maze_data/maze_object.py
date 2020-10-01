@@ -6,13 +6,14 @@
 from .drawable import Drawable
 
 MAZE_OBJECT_TYPE = {
-        0 : "Empty",
-        1 : "Wall",
-        2 : "Guard",
-        3 : "Needle",
-        4 : "Plastic Tube",
-        5 : "Ether",
-        9 : "MacGyver"}
+        0: "Empty",
+        1: "Wall",
+        2: "Guard",
+        3: "Needle",
+        4: "Plastic Tube",
+        5: "Ether",
+        9: "MacGyver"}
+
 
 class MazeObject(Drawable):
     """Reprensent a case in the maze"""
@@ -22,6 +23,8 @@ class MazeObject(Drawable):
         Create a new MazeObject.
         Value should be an integer reprenstig the type of case, value should
         be as in MAZE_OBJECT_TYPE.
+        Position should be a list of 2 integer representing the position as
+        Row -> Column
         """
         super().__init__(position)
         self._value = value
@@ -32,7 +35,7 @@ class MazeObject(Drawable):
                                                  self.position[0],
                                                  self.position[1])
 
-    def __str__(self)-> str:
+    def __str__(self) -> str:
         """Return str(self)."""
         output_string = "{} at position {} - {}"
         return output_string.format(MAZE_OBJECT_TYPE[self._value],

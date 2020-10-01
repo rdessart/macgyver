@@ -1,0 +1,3 @@
+[submodule "pygame_engine"]
+	path = pygame_engine
+	url = https://github.com/rdessart/pygame_engine.git
