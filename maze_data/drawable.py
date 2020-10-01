@@ -30,6 +30,4 @@ class Drawable():
         """
         Set the new position.
         """
-        if len(new_position) != 2:
-            raise ValueError("Position is invalid: should be of size 2 (x, y)")
         self.position[1], self.position[0] = new_position

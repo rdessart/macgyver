@@ -5,16 +5,16 @@
 
 import copy
 
-import maze_data.maze_object as maze_obj
-import maze_data.maze as maze
+
 import maze_data.drawable as drawable
+import maze_data.maze_object as maze_obj
 
 
 class Player(drawable.Drawable):
     """
     Represent our player
     """
-    def __init__(self, the_maze: maze.Maze = None):
+    def __init__(self):
         """
         Constructor.
         If a maze is available we save his reference.
@@ -22,10 +22,8 @@ class Player(drawable.Drawable):
         super().__init__([0, 0])
         self._position = [None, None]
         self.own_object = []
-        self._maze = None
         self._old_pos = None
-        if the_maze is not None:
-            self.bind_maze(the_maze)
+        self.value = 'X'
 
     def pickup(self):
         """
@@ -36,55 +34,25 @@ class Player(drawable.Drawable):
         self.own_object.append(copy.copy(self._old_pos[1].value))
         self._old_pos[1].value = 0
 
-    def _is_position_valid(self, position: list) -> bool:
-        """Check if the position is valid"""
-        if self._maze is None:
-            raise ValueError("The maze was not assign")
-        return not self._maze[position].is_blocking()
-
-    def _draw(self):
-        """
-        [PROTECTED] position the player on the maze and set the previous
-        cell to it initial value
-        """
-        
-        if self._old_pos:
-            # If we have an old value in memory we put it back on the maze
-            self._maze[self._old_pos[0]] = self._old_pos[1]
-        # Saving the cells before the player is positionned on it
-        self._old_pos = (self.position, self._maze[self.position])
-        # Positionning the player
-        self._maze[self.position] = maze.MazeObject(9, self.position)
-
-    def move(self, val_x: int, val_y: int) -> list:
+    def move(self, value_xy: tuple) -> None:
         """
         displace the player of val_x and val_x case respectivly toward
         the right and the bottom.
         The function will return the value of the cell under the player,
         if the displacement is impossible, the function return None
         """
-        new_pos = [self.position[0] + val_y, self.position[1] + val_x]
-        if self._is_position_valid(new_pos):
-            self.position = new_pos
-            self._draw()
-            return self._old_pos[1]
-        return None
+        print(value_xy)
+        self.position[0] += value_xy[1]
+        self.position[1] += value_xy[0]
+        print("Moved to {}:{}".format(self.position[0], self.position[1]))
 
-    def place(self, new_pos: list) -> list:
+    def place(self, new_pos: list) -> None:
         """
         Position the player onto the new_pos value.
         The function will return the value of the cell under the player,
         if the displacement is impossible, the function return None
         """
-        if self._is_position_valid(new_pos):
-            self.position = new_pos
-            self._draw()
-            return self._old_pos[1]
-        return None
-
-    def bind_maze(self, master_maze: maze.Maze):
-        """Save a reference of the maze."""
-        self._maze = master_maze
+        self.position = new_pos
 
     def display_owned_items(self) -> str:
         """Return a formated string with the items in our backpack"""

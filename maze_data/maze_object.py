@@ -30,9 +30,7 @@ class MazeObject(Drawable):
 
     def __repr__(self) -> str:
         """Return repr(self)."""
-        return "MazeObject({}, [{}, {}])".format(self._value,
-                                                 self.position[0],
-                                                 self.position[1])
+        return "MazeObject({}, {})".format(self._value, self.position)
 
     def __str__(self) -> str:
         """Return str(self)."""
