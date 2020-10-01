@@ -103,7 +103,7 @@ class Maze():
             log.critical("Specified file not found!\n%s", exception)
             return False
 
-    def place_random_object(self, objects_list: list):
+    def place_random_object(self, objects_list: list) -> list:
         """
         Function take a list of object and place them randomely in the maze.
         Object can only be placed over an empty (value = 0) cell
@@ -118,3 +118,6 @@ class Maze():
         while selected_block.value != 0:
             selected_block = choice(self)
         return selected_block
+
+    def draw(self, object_draw : Drawable) -> list(list()):
+        """draw objects"""

@@ -36,9 +36,9 @@ def main(args: list) -> int:
     my_maze = maze.Maze()
     if not my_maze.load_from_file(filepath):
         return 1
-    my_maze.place_random_object([maze_obj.MazeObject(3, [0, 0]),  # Needle
-                                 maze_obj.MazeObject(4, [0, 0]),  # Tube
-                                 maze_obj.MazeObject(5, [0, 0])])  # Ether
+    object_to_collect = [maze_obj.MazeObject(3, [0, 0]),  # Needle
+                         maze_obj.MazeObject(4, [0, 0]),  # Tube
+                         maze_obj.MazeObject(5, [0, 0])]  # Ether
 
     mac_gyver = player.Player(my_maze)  # we already bind the maze.
     start_position = my_maze.pickup_empty_space().position
