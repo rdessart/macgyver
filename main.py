@@ -39,7 +39,7 @@ def main(args: list) -> int:
     object_to_collect = [maze_obj.MazeObject(3, [0, 0]),  # Needle
                          maze_obj.MazeObject(4, [0, 0]),  # Tube
                          maze_obj.MazeObject(5, [0, 0])]  # Ether
-
+    my_maze.place_random_object(object_to_collect)
     mac_gyver = player.Player(my_maze)  # we already bind the maze.
     start_position = my_maze.pickup_empty_space().position
     case_value = mac_gyver.place(start_position)
