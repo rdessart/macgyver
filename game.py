@@ -6,9 +6,9 @@
 import os
 import copy
 
-from maze_data import maze, player
+from maze_data import Maze, MazeObject, Player
 from event import KeyPressedEvent
-import const
+from const import MAZE_PLACABLE, DEFAULT_INPUT_MSG
 
 
 class Game():
@@ -26,16 +26,15 @@ class Game():
 
     def _initialise_maze(self, maze_file: str) -> None:
         """[PROTECTED] Instanciate the maze and load it from a file"""
-        self.main_maze = maze.Maze()
+        self.main_maze = Maze()
         if not self.main_maze.load_from_file(maze_file):
             raise FileNotFoundError()
-        self.main_maze.place_random_object(const.OBJECTS)
-        self.requirement = [obj.value for obj in const.OBJECTS]
-        self.requirement.sort()
+        objects = [MazeObject(obj, None) for obj in MAZE_PLACABLE]
+        self.main_maze.place_random_object(objects)
 
     def _initialise_player(self) -> None:
         """[PROTECTED] Initalise the player"""
-        self.player_one = player.Player()
+        self.player_one = Player()
         player_pos = self.main_maze.pickup_empty_space()
         self.old_pos = player_pos
         self.player_one.place(player_pos.position)
@@ -47,12 +46,12 @@ class Game():
         on the ground
         """
         self.main_maze[self.old_pos.position] = self.old_pos
-        self._input_command(const.DEFAULT_INPUT_MSG)
+        self._input_command(DEFAULT_INPUT_MSG)
         player_case = self.main_maze[self.player_one.position]
         if player_case.is_blocking:
             self.player_one.position = self.old_pos.position
         self.old_pos = copy.deepcopy(self.main_maze[self.player_one.position])
-        if player_case.value in self.requirement:
+        if player_case.value in MAZE_PLACABLE:
             self.player_one.pickup(player_case)
             self.old_pos.value = 0
         self.run = (player_case.value != 2)
@@ -101,4 +100,4 @@ class Game():
             self._update()
         objects = [obj.value for obj in self.player_one.own_object]
         objects.sort()
-        return objects == self.requirement
+        return objects == MAZE_PLACABLE
