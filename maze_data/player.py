@@ -8,6 +8,7 @@ import copy
 
 import maze_data.drawable as drawable
 import maze_data.maze_object as maze_obj
+from .const import MAZE_DEFAULT_OBJ
 
 
 class Player(drawable.Drawable):
@@ -54,5 +55,5 @@ class Player(drawable.Drawable):
         """Return a formated string with the items in our backpack"""
         output_string = "Owned Item : "
         for obj in self.own_object:
-            output_string += "{} ".format(maze_obj.MAZE_DEFAULT_OBJ[obj.value])
+            output_string += "{} ".format(MAZE_DEFAULT_OBJ[obj.value])
         return output_string
