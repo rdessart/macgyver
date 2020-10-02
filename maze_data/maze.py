@@ -5,6 +5,7 @@
 
 from random import choice
 import logging as log
+import copy
 
 from .maze_object import MazeObject
 from .drawable import Drawable
@@ -109,16 +110,12 @@ class Maze():
         Function take a list of object and place them randomely in the maze.
         Object can only be placed over an empty (value = 0) cell
         """
-        while objects_list:
-            item = objects_list.pop(0)
-            self.pickup_empty_space().value = item.value
+        for obj in objects_list:
+            self.pickup_empty_space().value = obj.value
 
-    def pickup_empty_space(self) -> list:
+    def pickup_empty_space(self) -> MazeObject:
         """Return a free (value = 0) cell"""
         selected_block = choice(self)
         while selected_block.value != 0:
             selected_block = choice(self)
         return selected_block
-
-    def draw(self, object_draw : Drawable) -> list(list()):
-        """draw objects"""
