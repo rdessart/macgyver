@@ -1,12 +1,132 @@
-# !/usr/bin/python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-"""Module to handle the maze"""
+"""Handle all the maze, the blitable item as MazeObject and Player"""
 
 from random import choice
 import logging as log
+from copy import copy
 
-from .maze_object import MazeObject
+import const
+
+
+class Drawable():
+    """Class to reprensent any drawable object on the maze"""
+
+    def __init__(self, position: list):
+        """Create a new drawable object, to be place at the given position."""
+        self.position = position
+
+    def __repr__(self):
+        """ Implement repr()"""
+        return "Drawable({})".format(self.position)
+
+    def __str__(self):
+        """Implement str()"""
+        ouput_string = "Drawable object at pos x : {} - y : {}"
+        return ouput_string.format(self.position_xy[0], self.position_xy[1])
+
+    @property
+    def position_xy(self) -> tuple:
+        """Return the positon as tuple."""
+        return (self.position[1], self.position[0])
+
+    @position_xy.setter
+    def position_xy(self, new_position: list):
+        """
+        Set the new position.
+        """
+        self.position[1], self.position[0] = new_position
+
+
+class MazeObject(Drawable):
+    """Reprensent a case in the maze"""
+
+    def __init__(self, value: int, position: list):
+        """
+        Create a new MazeObject.
+        Value should be an integer reprenstig the type of case, value should
+        be as in MAZE_OBJECT_TYPE.
+        Position should be a list of 2 integer representing the position as
+        Row -> Column
+        """
+        super().__init__(position)
+        self._value = value
+
+    def __repr__(self) -> str:
+        """Return repr(self)."""
+        return "MazeObject({}, {})".format(self._value, self.position)
+
+    def __str__(self) -> str:
+        """Return str(self)."""
+        output_string = "{} at position {} - {}"
+        return output_string.format(self._value,
+                                    self.position[0],
+                                    self.position[1])
+
+    @property
+    def value(self):
+        """Return the value of the case."""
+        return self._value
+
+    @value.setter
+    def value(self, value: int):
+        """
+        Update the value of the case
+        """
+        self._value = value
+
+    def is_blocking(self) -> bool:
+        """Return true if player can't go through the object."""
+        return self._value == 1
+
+
+class Player(Drawable):
+    """
+    Represent our player
+    """
+    def __init__(self):
+        """
+        Constructor.
+        If a maze is available we save his reference.
+        """
+        super().__init__([0, 0])
+        self._position = [None, None]
+        self.own_object = []
+        self.value = 'X'
+
+    def pickup(self, maze_object: MazeObject):
+        """
+        Add the item under the player to our backpack, and reset the cell
+        to it's empty value (value = 0)
+        """
+        # To avoid a reference copy we explicitly ask python to copy the value
+        self.own_object.append(copy(maze_object))
+
+    def move(self, value_xy: tuple) -> None:
+        """
+        displace the player of val_x and val_x case respectivly toward
+        the right and the bottom.
+        The function will return the value of the cell under the player,
+        if the displacement is impossible, the function return None
+        """
+        self.position[0] += value_xy[1]
+        self.position[1] += value_xy[0]
+
+    def place(self, new_pos: list) -> None:
+        """
+        Position the player onto the new_pos value.
+        The function will return the value of the cell under the player,
+        if the displacement is impossible, the function return None
+        """
+        self.position = new_pos
+
+    def display_owned_items(self) -> str:
+        """Return a formated string with the items in our backpack"""
+        output_string = "Owned Item : "
+        for obj in self.own_object:
+            output_string += "{} ".format(const.MAZE_DEFAULT_OBJ[obj.value])
+        return output_string
 
 
 class Maze():
