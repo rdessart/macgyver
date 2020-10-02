@@ -5,7 +5,6 @@
 
 from random import choice
 import logging as log
-import copy
 
 from .maze_object import MazeObject
 
@@ -104,9 +103,6 @@ class Maze():
             log.critical("Specified file not found!\n%s", exception)
             return False
 
-    def load_from_memory(self, maze_data):
-        self.maze_data = maze_data
-
     def place_random_object(self, objects_list: list) -> list:
         """
         Function take a list of object and place them randomely in the maze.
@@ -121,6 +117,3 @@ class Maze():
         while selected_block.value != 0:
             selected_block = choice(self)
         return selected_block
-
-    def get_copy_maze(self):
-        return copy.copy(self.maze_data)
