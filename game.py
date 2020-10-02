@@ -25,7 +25,7 @@ class Game():
         self._initialise_player()
 
     def _initialise_maze(self, maze_file: str) -> None:
-        """Instanciate the maze and load it from a file"""
+        """[PROTECTED] Instanciate the maze and load it from a file"""
         self.main_maze = maze.Maze()
         if not self.main_maze.load_from_file(maze_file):
             raise FileNotFoundError()
@@ -34,23 +34,18 @@ class Game():
         self.requirement.sort()
 
     def _initialise_player(self) -> None:
-        """Initalise the player"""
+        """[PROTECTED] Initalise the player"""
         self.player_one = player.Player()
         player_pos = self.main_maze.pickup_empty_space()
         self.old_pos = player_pos
         self.player_one.place(player_pos.position)
         self.main_maze[self.player_one.position] = self.player_one
 
-    def game_loop(self) -> bool:
-        """The game loop, return True if player won, else False"""
-        while self.run:
-            self._draw()
-            self._update()
-        objects = [obj.value for obj in self.player_one.own_object]
-        objects.sort()
-        return objects == self.requirement
-
     def _update(self) -> None:
+        """
+        [PROTECTED] Ask for user input, move player, if any pickup object
+        on the ground
+        """
         self.main_maze[self.old_pos.position] = self.old_pos
         self._input_command(const.DEFAULT_INPUT_MSG)
         player_case = self.main_maze[self.player_one.position]
@@ -65,26 +60,45 @@ class Game():
         self.main_maze[self.player_one.position] = self.player_one
 
     def _input_command(self, message: str) -> tuple:
-        """Ask user witch direction to go"""
+        """[PROTECTED] Manage user input"""
         command = input(message).upper()
         if(command in self._action):
             self._action[command].execute()
         elif command == 'R':
             self.run = False
 
-    def bind_action(self, key: str, event: KeyPressedEvent) -> None:
-        """Bind action"""
-        self._action[key] = event
-
     def _clear_screen(self) -> None:
-        """Clear the screen"""
+        """[PROTECTED] Clear the screen"""
         if os.name == 'nt':  # Windows
             os.system('cls')
         else:
             os.system('clear')
 
     def _draw(self) -> None:
-        """Clear the screen, display the owned items and the maze"""
+        """
+        [PROTECTED]
+        Call the function to clear the screen;
+        Display the owned items and the maze
+        """
         self._clear_screen()
         print(self.player_one.display_owned_items())
         print(self.main_maze)
+
+    def bind_action(self, key: str, event: KeyPressedEvent) -> None:
+        """Bind an action to a key pressed on the keyboard"""
+        self._action[key] = event
+
+    def game_loop(self) -> bool:
+        """
+        The game loop : run until self.run is set to false by _update method
+        Each run, the loop display the maze and wait for user input.
+        This will return a boolean:
+            - True if all the const.OBJECT are pickup,
+            - False if not
+        """
+        while self.run:
+            self._draw()
+            self._update()
+        objects = [obj.value for obj in self.player_one.own_object]
+        objects.sort()
+        return objects == self.requirement
