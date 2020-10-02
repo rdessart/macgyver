@@ -6,9 +6,9 @@
 import os
 import copy
 
-from maze_data import Maze, Player
+from maze_data import Maze, MazeObject, Player
 from event import KeyPressedEvent
-import const
+from const import MAZE_PLACABLE, DEFAULT_INPUT_MSG
 
 
 class Game():
@@ -29,9 +29,8 @@ class Game():
         self.main_maze = Maze()
         if not self.main_maze.load_from_file(maze_file):
             raise FileNotFoundError()
-        self.main_maze.place_random_object(const.OBJECTS)
-        self.requirement = [obj.value for obj in const.OBJECTS]
-        self.requirement.sort()
+        objects = [MazeObject(obj, None) for obj in MAZE_PLACABLE]
+        self.main_maze.place_random_object(objects)
 
     def _initialise_player(self) -> None:
         """[PROTECTED] Initalise the player"""
@@ -47,12 +46,12 @@ class Game():
         on the ground
         """
         self.main_maze[self.old_pos.position] = self.old_pos
-        self._input_command(const.DEFAULT_INPUT_MSG)
+        self._input_command(DEFAULT_INPUT_MSG)
         player_case = self.main_maze[self.player_one.position]
         if player_case.value == 1:
             self.player_one.position = self.old_pos.position
         self.old_pos = copy.deepcopy(self.main_maze[self.player_one.position])
-        if player_case.value in self.requirement:
+        if player_case.value in MAZE_PLACABLE:
             self.player_one.pickup(player_case)
             self.old_pos.value = 0
         self.run = (player_case.value != 2)
@@ -101,4 +100,4 @@ class Game():
             self._update()
         objects = [obj.value for obj in self.player_one.own_object]
         objects.sort()
-        return objects == self.requirement
+        return objects == MAZE_PLACABLE

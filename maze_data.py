@@ -125,7 +125,7 @@ class Player(Drawable):
         """Return a formated string with the items in our backpack"""
         output_string = "Owned Item : "
         for obj in self.own_object:
-            output_string += "{} ".format(const.MAZE_DEFAULT_OBJ[obj.value])
+            output_string += "{} ".format(const.MAZE_OBJ[obj.value])
         return output_string
 
 
