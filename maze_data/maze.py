@@ -5,7 +5,6 @@
 
 from random import choice
 import logging as log
-import copy
 
 from .maze_object import MazeObject
 from .drawable import Drawable

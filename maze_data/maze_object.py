@@ -5,14 +5,6 @@
 
 from .drawable import Drawable
 
-MAZE_DEFAULT_OBJ = ["Empty",
-                    "Wall",
-                    "Guard",
-                    "Needle",
-                    "Plastic Tube",
-                    "Ether",
-                    "MacGyver"]
-
 
 class MazeObject(Drawable):
     """Reprensent a case in the maze"""
@@ -35,7 +27,7 @@ class MazeObject(Drawable):
     def __str__(self) -> str:
         """Return str(self)."""
         output_string = "{} at position {} - {}"
-        return output_string.format(MAZE_DEFAULT_OBJ[self._value],
+        return output_string.format(self._value,
                                     self.position[0],
                                     self.position[1])
 
