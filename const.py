@@ -3,20 +3,22 @@
 
 """Program constant"""
 
-IMG_FOLDER = "./resources/img"
+import os
 
-MAZE_OBJ = [("Empty", None),
-            ("Wall", "floor-tiles-20x20.png", (20, 20, 220, 0)),
-            ("Guard", "Gardien.png"),
-            ("Needle", "aiguille.png"),
-            ("Plastic Tube", "tube_plastique.png"),
-            ("Ether", "ether.png"),
-            ("MacGyver", "MacGyver.png")]
+IMG_FOLDER = os.path.join(os.path.dirname(__file__), "resources", "img")
 
-MAZE_PLACABLE = [MAZE_OBJ.index("Needle"),
-                 MAZE_OBJ.index("Plastic Tube"),
-                 MAZE_OBJ.index("Ether")]
+MAZE_OBJ = {0: ("Empty", None),
+            1: ("Wall", "floor-tiles-20x20.png", (20, 20, 220, 0)),
+            2: ("Guard", "Gardien.png"),
+            3: ("Needle", "aiguille.png"),
+            4: ("Plastic Tube","tube_plastique.png"),
+            5: ("Ether", "ether.png"),
+            6: ("MacGyver", "MacGyver.png")}
+
+MAZE_PLACABLE = [3, 4, 5]
 
 DEFAULT_MAZE_FILE = "./resources/levels/level0.lvl"
 
 DEFAULT_INPUT_MSG = "Select your action [Z/S/Q/D]: "
+
+RESOLUTION = [700, 1000]
