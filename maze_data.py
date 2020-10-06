@@ -19,8 +19,8 @@ class Drawable(pygame.sprite.Sprite):
     def __init__(self, image_path: str, position: list = []):
         """Create a new drawable object, to be place at the given position."""
         super().__init__()
-        self.position = []
-        self.surface = None
+        self.position = position
+        self.image = None
 
     def __repr__(self):
         """ Implement repr()"""
@@ -49,22 +49,22 @@ class Drawable(pygame.sprite.Sprite):
             self.position[1], self.position[0] = new_position
 
     def set_colorkey(self, color: pygame.Color):
-        """Set the alpha color of the surface"""
-        self.surface.set_colorkey(color)
+        """Set the alpha color of the image"""
+        self.image.set_colorkey(color)
 
     def scale(self, new_res: tuple):
         """ Rescale image to the new resolution"""
-        self.surface = pygame.transform.smoothscale(self.surface, new_res)
+        self.image = pygame.transform.smoothscale(self.image, new_res)
 
     def overlay(self, color: tuple, flags=pygame.BLEND_MULT):
-        """ Add a color overlay to the surface"""
-        self.surface.fill(color, special_flags=flags)
+        """ Add a color overlay to the image"""
+        self.image.fill(color, special_flags=flags)
 
     def load_from_file(self, file_path: str, color_key=None) -> bool:
         """Load image from a file"""
         fullpath = path.join(path.dirname(__file__), file_path)
         try:
-            image = pygame.image.load(path)
+            image = pygame.image.load(file_path)
         except FileNotFoundError as exception:
             log.warning("Unable to load image from %s\n%s"
                         % (fullpath, exception))
@@ -75,13 +75,13 @@ class Drawable(pygame.sprite.Sprite):
                 color_key = self._image.get_at((10, 10))
             self._image.set_colorkey(color_key)
         self._image_rect = self._image.get_rect()
-        self.surface = self._image
+        self.image = self._image
         return True
 
     def crop(self, width: int, height: int, left: int, top: int):
-        self.surface = pygame.Surface([width, height])
-        self.surface.blit(self._image, (0, 0), (top, left, width, height))
-        self._image_rect = self.surface.get_rect()
+        self.image = pygame.Surface([width, height])
+        self.image.blit(self._image, (0, 0), (top, left, width, height))
+        self._image_rect = self.image.get_rect()
 
 
 class MazeObject(Drawable):
@@ -97,6 +97,17 @@ class MazeObject(Drawable):
         """
         super().__init__(position)
         self._value = value
+        object_data = const.MAZE_OBJ[value]
+        if object_data[1] is not None:
+            self.load_from_file(path.join(const.IMG_FOLDER, object_data[1]))
+            if len(object_data) > 2:
+                self.crop(object_data[2][0],
+                          object_data[2][1],
+                          object_data[2][2],
+                          object_data[2][3])
+        else:
+            self.image = pygame.Surface(const.SPRITE_SIZE)
+            self.image.fill((255, 255, 255))
 
     def __repr__(self) -> str:
         """Return repr(self)."""
