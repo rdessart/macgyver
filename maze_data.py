@@ -6,16 +6,21 @@
 from random import choice
 import logging as log
 from copy import copy
+from os import path
+
+import pygame
 
 import const
 
 
-class Drawable():
+class Drawable(pygame.sprite.Sprite):
     """Class to reprensent any drawable object on the maze"""
 
-    def __init__(self, position: list):
+    def __init__(self, image_path: str, position: list = []):
         """Create a new drawable object, to be place at the given position."""
-        self.position = position
+        super().__init__()
+        self.position = []
+        self.surface = None
 
     def __repr__(self):
         """ Implement repr()"""
@@ -29,14 +34,54 @@ class Drawable():
     @property
     def position_xy(self) -> tuple:
         """Return the positon as tuple."""
-        return (self.position[1], self.position[0])
+        if self.position is not None:
+            return (self.position[1], self.position[0])
+        return None
 
     @position_xy.setter
     def position_xy(self, new_position: list):
         """
         Set the new position.
         """
-        self.position[1], self.position[0] = new_position
+        if self.position is None:
+            self.position = [new_position[0], new_position[1]]
+        else:
+            self.position[1], self.position[0] = new_position
+
+    def set_colorkey(self, color: pygame.Color):
+        """Set the alpha color of the surface"""
+        self.surface.set_colorkey(color)
+
+    def scale(self, new_res: tuple):
+        """ Rescale image to the new resolution"""
+        self.surface = pygame.transform.smoothscale(self.surface, new_res)
+
+    def overlay(self, color: tuple, flags=pygame.BLEND_MULT):
+        """ Add a color overlay to the surface"""
+        self.surface.fill(color, special_flags=flags)
+
+    def load_from_file(self, file_path: str, color_key=None) -> bool:
+        """Load image from a file"""
+        fullpath = path.join(path.dirname(__file__), file_path)
+        try:
+            image = pygame.image.load(path)
+        except FileNotFoundError as exception:
+            log.warning("Unable to load image from %s\n%s"
+                        % (fullpath, exception))
+            return False
+        self._image = image.convert()
+        if color_key is not None:
+            if color_key == -1:
+                color_key = self._image.get_at((10, 10))
+            self._image.set_colorkey(color_key)
+        self._image_rect = self._image.get_rect()
+        self.surface = self._image
+        return True
+
+    def crop(self, width: int, height: int, left: int, top: int):
+        self.surface = pygame.Surface([width, height])
+        self.surface.blit(self._image, (0, 0), (top, left, width, height))
+        self._image_rect = self.surface.get_rect()
 
 
 class MazeObject(Drawable):
