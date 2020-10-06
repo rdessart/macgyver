@@ -6,9 +6,11 @@
 import os
 import copy
 
+import pygame
+
 from maze_data import Maze, MazeObject, Player
 from event import KeyPressedEvent
-from const import MAZE_PLACABLE, DEFAULT_INPUT_MSG
+from const import MAZE_PLACABLE, DEFAULT_INPUT_MSG, RESOLUTION
 
 
 class Game():
@@ -21,6 +23,7 @@ class Game():
         self.old_pos = None
         self._action = {}
         self.run = True
+        self.window = pygame.display.set_mode(RESOLUTION)
         self._initialise_maze(maze_file)
         self._initialise_player()
 
