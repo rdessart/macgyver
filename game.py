@@ -47,6 +47,7 @@ class Game():
         self.player_one.position = player_pos.position
         self.player_one.scale(SPRITE_SIZE)
         self.main_maze.drawables.append(self.player_one)
+        self.old_pos = copy.copy(self.main_maze[self.player_one.position])
         self.main_maze[self.player_one.position] = self.player_one
 
     def _update(self) -> None:
@@ -67,14 +68,18 @@ class Game():
                 future_pos[1] -= 1
             elif event.key == pygame.K_RIGHT:
                 future_pos[1] += 1
-            if self.main_maze[future_pos].value not in MAZE_BLOCKING:
-                self.player_one.position = future_pos
+            if self.main_maze[future_pos].value in MAZE_BLOCKING:
+                return
             if self.main_maze[future_pos].value in MAZE_PLACABLE:
                 self.player_one.pickup(self.main_maze[future_pos])
                 self.main_maze.drawables.remove(self.main_maze[future_pos])
                 self.main_maze[future_pos].value = 0
             elif self.main_maze[future_pos].value == 2:
                 self.run = False
+            self.main_maze[self.old_pos.position] = self.old_pos
+            self.old_pos = copy.copy(self.main_maze[future_pos])
+            self.player_one.position = future_pos
+            self.main_maze[self.player_one.position] = self.player_one
 
     def _draw(self) -> None:
         """

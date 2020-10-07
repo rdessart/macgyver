@@ -167,6 +167,7 @@ class Player(Drawable):
         self._position = None
         self.own_object = []
         self.load_from_file(path.join(const.IMG_FOLDER, const.MAZE_OBJ[6][1]))
+        self.value = 'X'  # DEBUG
 
     def pickup(self, maze_object: MazeObject):
         """
