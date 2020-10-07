@@ -16,37 +16,50 @@ import const
 class Drawable(pygame.sprite.Sprite):
     """Class to reprensent any drawable object on the maze"""
 
-    def __init__(self, image_path: str, position: list = []):
+    def __init__(self, position: list = []):
         """Create a new drawable object, to be place at the given position."""
         super().__init__()
-        self.position = position
+        self._position = position
         self.image = None
+        self.rect = []
 
     def __repr__(self):
         """ Implement repr()"""
-        return "Drawable({})".format(self.position)
+        return "Drawable({})".format(self._position)
 
     def __str__(self):
         """Implement str()"""
         ouput_string = "Drawable object at pos x : {} - y : {}"
-        return ouput_string.format(self.position_xy[0], self.position_xy[1])
+        return ouput_string.format(self._position[0], self._position[1])
+
+    # @property
+    # def position_xy(self) -> tuple:
+    #     """Return the positon as tuple."""
+    #     if self._position is not None:
+    #         return (self._position[1], self._position[0])
+    #     return None
+
+    # @position_xy.setter
+    # def position_xy(self, new_position: list):
+    #     """
+    #     Set the new position.
+    #     """
+    #     if self._position is None:
+    #         self._position = [new_position[0], new_position[1]]
+    #     else:
+    #         self._position[1], self._position[0] = new_position
 
     @property
-    def position_xy(self) -> tuple:
-        """Return the positon as tuple."""
-        if self.position is not None:
-            return (self.position[1], self.position[0])
-        return None
+    def position(self) -> tuple:
+        """Return the position of the object as a tuple"""
+        return self._position
 
-    @position_xy.setter
-    def position_xy(self, new_position: list):
-        """
-        Set the new position.
-        """
-        if self.position is None:
-            self.position = [new_position[0], new_position[1]]
-        else:
-            self.position[1], self.position[0] = new_position
+    @position.setter
+    def position(self, position: list):
+        """Set the position of the object as well as the rect of the image"""
+        self.rect.x = position[1] * const.SPRITE_SIZE[0]
+        self.rect.y = position[0] * const.SPRITE_SIZE[1]
+        self._position = position
 
     def set_colorkey(self, color: pygame.Color):
         """Set the alpha color of the image"""
@@ -74,14 +87,14 @@ class Drawable(pygame.sprite.Sprite):
             if color_key == -1:
                 color_key = self._image.get_at((10, 10))
             self._image.set_colorkey(color_key)
-        self._image_rect = self._image.get_rect()
+        self.rect = self._image.get_rect()
         self.image = self._image
         return True
 
     def crop(self, width: int, height: int, left: int, top: int):
         self.image = pygame.Surface([width, height])
         self.image.blit(self._image, (0, 0), (top, left, width, height))
-        self._image_rect = self.image.get_rect()
+        self.rect = self.image.get_rect()
 
 
 class MazeObject(Drawable):
@@ -90,10 +103,12 @@ class MazeObject(Drawable):
     def __init__(self, value: int, position: list):
         """
         Create a new MazeObject.
-        Value should be an integer reprenstig the type of case, value should
+        - Value should be an integer reprenstig the type of case, value should
         be as in MAZE_OBJECT_TYPE.
-        Position should be a list of 2 integer representing the position as
-        Row -> Column
+        - Position should be a list of 2 integer representing the position as
+        Row -> Column or None if not yet set.
+
+        The image file, or any cropping data are loaded from "const.py"
         """
         super().__init__(position)
         self._value = value
@@ -105,9 +120,11 @@ class MazeObject(Drawable):
                           object_data[2][1],
                           object_data[2][2],
                           object_data[2][3])
+                self.scale(const.SPRITE_SIZE)
         else:
             self.image = pygame.Surface(const.SPRITE_SIZE)
             self.image.fill((255, 255, 255))
+            self.rect = self.image.get_rect()
 
     def __repr__(self) -> str:
         """Return repr(self)."""
@@ -147,16 +164,17 @@ class Player(Drawable):
         If a maze is available we save his reference.
         """
         super().__init__([0, 0])
-        self._position = [None, None]
+        self._position = None
         self.own_object = []
-        self.value = 'X'
+        self.load_from_file(path.join(const.IMG_FOLDER, const.MAZE_OBJ[6][1]))
 
     def pickup(self, maze_object: MazeObject):
         """
         Add the item under the player to our backpack, and reset the cell
-        to it's empty value (value = 0)
+        to it's empty value (value = 0).
+        As object get also edited in the game loop we proceed to a full copy
+        instead of a reference copy.
         """
-        # To avoid a reference copy we explicitly ask python to copy the value
         self.own_object.append(copy(maze_object))
 
     def move(self, value_xy: tuple) -> None:
@@ -168,6 +186,8 @@ class Player(Drawable):
         """
         self.position[0] += value_xy[1]
         self.position[1] += value_xy[0]
+        self.rect.x = self.position[1] * const.SPRITE_SIZE[0]
+        self.rect.y = self.position[0] * const.SPRITE_SIZE[1]
 
     def place(self, new_pos: list) -> None:
         """
@@ -192,6 +212,8 @@ class Maze():
         """Constructor"""
         self.maze_data = []
         self._iterator_pos = [0, -1]
+        self.maze_group = pygame.sprite.Group()
+        self.drawables = []
 
     def __str__(self):
         """Implement str()"""
@@ -258,8 +280,13 @@ class Maze():
         for column_data in enumerate(column_value):
             if not column_data[1].isnumeric():
                 continue
-            maze_line.append(MazeObject(int(column_data[1]),
-                                        [row_data[0], column_data[0]]))
+            maze_obj = MazeObject(int(column_data[1]),
+                                  [row_data[0], column_data[0]])
+            maze_line.append(maze_obj)
+            maze_obj.rect.x = column_data[0] * const.SPRITE_SIZE[0]
+            maze_obj.rect.y = row_data[0] * const.SPRITE_SIZE[1]
+            self.maze_group.add(maze_obj)
+            self.drawables.append(maze_obj)
         self.maze_data.append(maze_line)
 
     # Public mehtods:
@@ -285,7 +312,10 @@ class Maze():
         Object can only be placed over an empty (value = 0) cell
         """
         for obj in objects_list:
-            self.pickup_empty_space().value = obj.value
+            position = self.pickup_empty_space().position
+            obj.position = position
+            self[position] = obj
+            self.drawables.append(obj)
 
     def pickup_empty_space(self) -> MazeObject:
         """Return a free (value = 0) cell"""
