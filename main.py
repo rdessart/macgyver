@@ -15,12 +15,10 @@ def main(args: list):
     if len(args) > 1:
         filepath = os.path.join(os.path.dirname(__file__),
                                 args[1])
-
-    the_game = game.Game(filepath)
-    if the_game.game_loop():
-        print("YOU WIN !!!!")
-    else:
-        print("YOU LOOSE :( ")
+    play = True
+    while play:
+        the_game = game.Game(filepath)
+        play = the_game.game_loop()
 
 
 if __name__ == "__main__":

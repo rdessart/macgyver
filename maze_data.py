@@ -12,6 +12,8 @@ import pygame
 
 import const
 
+pygame.init()
+
 
 class Drawable(pygame.sprite.Sprite):
     """Class to reprensent any drawable object on the maze"""
@@ -32,23 +34,6 @@ class Drawable(pygame.sprite.Sprite):
         ouput_string = "Drawable object at pos x : {} - y : {}"
         return ouput_string.format(self._position[0], self._position[1])
 
-    # @property
-    # def position_xy(self) -> tuple:
-    #     """Return the positon as tuple."""
-    #     if self._position is not None:
-    #         return (self._position[1], self._position[0])
-    #     return None
-
-    # @position_xy.setter
-    # def position_xy(self, new_position: list):
-    #     """
-    #     Set the new position.
-    #     """
-    #     if self._position is None:
-    #         self._position = [new_position[0], new_position[1]]
-    #     else:
-    #         self._position[1], self._position[0] = new_position
-
     @property
     def position(self) -> tuple:
         """Return the position of the object as a tuple"""
@@ -57,8 +42,9 @@ class Drawable(pygame.sprite.Sprite):
     @position.setter
     def position(self, position: list):
         """Set the position of the object as well as the rect of the image"""
-        self.rect.x = position[1] * const.SPRITE_SIZE[0]
-        self.rect.y = position[0] * const.SPRITE_SIZE[1]
+        if self.rect is not None:
+            self.rect.x = position[1] * const.SPRITE_SIZE[0]
+            self.rect.y = position[0] * const.SPRITE_SIZE[1]
         self._position = position
 
     def set_colorkey(self, color: pygame.Color):
@@ -74,7 +60,7 @@ class Drawable(pygame.sprite.Sprite):
         self.image.fill(color, special_flags=flags)
 
     def load_from_file(self, file_path: str, color_key=None) -> bool:
-        """Load image from a file"""
+        """Load image from a file, if set"""
         fullpath = path.join(path.dirname(__file__), file_path)
         try:
             image = pygame.image.load(file_path)
@@ -82,6 +68,7 @@ class Drawable(pygame.sprite.Sprite):
             log.warning("Unable to load image from %s\n%s"
                         % (fullpath, exception))
             return False
+
         self._image = image.convert()
         if color_key is not None:
             if color_key == -1:
@@ -92,6 +79,8 @@ class Drawable(pygame.sprite.Sprite):
         return True
 
     def crop(self, width: int, height: int, left: int, top: int):
+        """Cut the image to fit a width * height rectangle from the data
+        starting a top & left"""
         self.image = pygame.Surface([width, height])
         self.image.blit(self._image, (0, 0), (top, left, width, height))
         self.rect = self.image.get_rect()
@@ -324,3 +313,38 @@ class Maze():
         while selected_block.value != 0:
             selected_block = choice(self)
         return selected_block
+
+
+class Text(Drawable):
+    """
+    Handle Text
+    """
+    def __init__(self, position: tuple = None):
+        """ Initalise new text drawer"""
+        super().__init__(None)
+        self.rect = None
+        self.font = None
+        self.anti_aliasing = True
+        self.foreground_color = (255, 255, 255)
+        self.background_color = (0, 0, 0, 0)
+        self.position = position
+
+    @staticmethod
+    def get_sys_font():
+        """Return all installed font"""
+        return pygame.font.get_fonts()
+
+    def load_font_from_sys(self, font_name: str, size: int):
+        """Load a font from the default system fonts"""
+        path_font = pygame.font.match_font(font_name)
+        self.font = pygame.font.Font(path_font, size)
+
+    def write(self, text: str):
+        """Write text on the surface"""
+        self.image = self.font.render(text,
+                                      self.anti_aliasing,
+                                      self.foreground_color,
+                                      self.background_color)
+        self.rect = self.image.get_rect()
+        self.rect.x = self.position[0]
+        self.rect.y = self.position[1]
