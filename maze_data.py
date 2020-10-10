@@ -166,18 +166,6 @@ class Player(Drawable):
         """
         self.own_object.append(copy(maze_object))
 
-    def move(self, value_xy: tuple) -> None:
-        """
-        displace the player of val_x and val_x case respectivly toward
-        the right and the bottom.
-        The function will return the value of the cell under the player,
-        if the displacement is impossible, the function return None
-        """
-        self.position[0] += value_xy[1]
-        self.position[1] += value_xy[0]
-        self.rect.x = self.position[1] * const.SPRITE_SIZE[0]
-        self.rect.y = self.position[0] * const.SPRITE_SIZE[1]
-
     def place(self, new_pos: list) -> None:
         """
         Position the player onto the new_pos value.
@@ -186,12 +174,40 @@ class Player(Drawable):
         """
         self.position = new_pos
 
-    def display_owned_items(self) -> str:
-        """Return a formated string with the items in our backpack"""
-        output_string = "Owned Item : "
-        for obj in self.own_object:
-            output_string += "{} ".format(const.MAZE_OBJ[obj.value])
-        return output_string
+
+class Text(Drawable):
+    """
+    Handle Text
+    """
+    def __init__(self, position: tuple = None):
+        """ Initalise new text drawer"""
+        super().__init__(None)
+        self.rect = None
+        self.font = None
+        self.anti_aliasing = True
+        self.foreground_color = (255, 255, 255)
+        self.background_color = (0, 0, 0, 0)
+        self.position = position
+
+    @staticmethod
+    def get_sys_font():
+        """Return all installed font"""
+        return pygame.font.get_fonts()
+
+    def load_font_from_sys(self, font_name: str, size: int):
+        """Load a font from the default system fonts"""
+        path_font = pygame.font.match_font(font_name)
+        self.font = pygame.font.Font(path_font, size)
+
+    def write(self, text: str):
+        """Write text on the surface"""
+        self.image = self.font.render(text,
+                                      self.anti_aliasing,
+                                      self.foreground_color,
+                                      self.background_color)
+        self.rect = self.image.get_rect()
+        self.rect.x = self.position[0]
+        self.rect.y = self.position[1]
 
 
 class Maze():
@@ -234,24 +250,6 @@ class Maze():
         else:
             row, column = position
         self.maze_data[row][column] = value
-
-    def __iter__(self):
-        """Implement this class as an iterable"""
-        return self
-
-    def __next__(self):
-        """
-        Implement an iterator to go throught all the maze
-        Iteration is made row by row : [0][1] .. [0][n], [1][0] .. [1][n],..
-        """
-        self._iterator_pos[1] += 1
-        if self._iterator_pos[1] >= len(self.maze_data[self._iterator_pos[0]]):
-            self._iterator_pos[0] += 1
-            self._iterator_pos[1] = 0
-
-        if self._iterator_pos[0] >= len(self.maze_data):
-            raise StopIteration
-        return self.maze_data[self._iterator_pos[0]][self._iterator_pos[1]]
 
     def __len__(self) -> int:
         """
@@ -310,38 +308,3 @@ class Maze():
         while selected_block.value != 0:
             selected_block = choice(self)
         return selected_block
-
-
-class Text(Drawable):
-    """
-    Handle Text
-    """
-    def __init__(self, position: tuple = None):
-        """ Initalise new text drawer"""
-        super().__init__(None)
-        self.rect = None
-        self.font = None
-        self.anti_aliasing = True
-        self.foreground_color = (255, 255, 255)
-        self.background_color = (0, 0, 0, 0)
-        self.position = position
-
-    @staticmethod
-    def get_sys_font():
-        """Return all installed font"""
-        return pygame.font.get_fonts()
-
-    def load_font_from_sys(self, font_name: str, size: int):
-        """Load a font from the default system fonts"""
-        path_font = pygame.font.match_font(font_name)
-        self.font = pygame.font.Font(path_font, size)
-
-    def write(self, text: str):
-        """Write text on the surface"""
-        self.image = self.font.render(text,
-                                      self.anti_aliasing,
-                                      self.foreground_color,
-                                      self.background_color)
-        self.rect = self.image.get_rect()
-        self.rect.x = self.position[0]
-        self.rect.y = self.position[1]
