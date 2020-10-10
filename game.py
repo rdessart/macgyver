@@ -94,13 +94,14 @@ class Game():
             self.player_one.position = future_pos
             self.main_maze[self.player_one.position] = self.player_one
 
-    def _draw(self) -> None:
+    def _draw(self, debug: bool = False) -> None:
         """
         [PROTECTED]
         - Clear the screen
         - display the maze and the player
         - display the player's owned items
         - display the syringe in green if we pick-up all the items, else in red
+        If debug  is set to true, the console output the display of the maze
         """
         # Display the maze
         self.window.fill((0, 0, 0))
@@ -121,16 +122,17 @@ class Game():
         pos = len(MAZE_PLACABLE)
         syringe = MazeObject(7, [16, pos + 1])
         syringe.scale(SPRITE_SIZE)
-        # Display the syringe in green if we have all the object
+        # Display the syringe in green if we have all the object else in red
         if self.win:
             syringe.overlay((0, 255, 0, 75))
         else:
-            # else in red
             syringe.overlay((255, 0, 0, 75))
 
         self.window.blit(syringe.image, (120 + ((pos + 2) * SPRITE_SIZE[0]),
                                          RESOLUTION[1] - SPRITE_SIZE[1] * 1.5))
         pygame.display.flip()
+        if debug:
+            print(self.main_maze)
 
     def start_screen(self):
         """Show startup screen"""
@@ -152,10 +154,15 @@ class Game():
                 exit()
 
     def close_screen(self):
-        """ """
+        """
+        Display the exit message and return a boolean in respect with user
+        input
+        - If the ENTRY key is pressed the fuction return True
+        - If the ESC key is pressed the function return False
+        """
         self.window.fill((0, 0, 0))
         text = Text((0, 0))
-        text.load_font_from_sys(Text.get_sys_font()[0], 50)
+        text.load_font_from_sys(Text.get_sys_font()[0], 40)
         if self.win:
             text.foreground_color = (0, 255, 0)
             text.write("You win !")
@@ -164,26 +171,36 @@ class Game():
             text.write("You loose !")
 
         text.rect.x = (RESOLUTION[0] / 2) - (text.rect.width / 2)
-        text.rect.y = (RESOLUTION[1] / 2) - (text.rect.height)
+        text.rect.y = (RESOLUTION[1] / 2) - 100
         self.window.blit(text.image, text.rect)
         prev_pos = text.rect.y
         text.write("Press ENTER to Replay...")
         text.rect.y = prev_pos + 60
+        text.rect.x = (RESOLUTION[0] / 2) - (text.rect.width / 2)
         self.window.blit(text.image, text.rect)
-
+        prev_pos = text.rect.y
+        self.window.blit(text.image, text.rect)
+        prev_pos = text.rect.y
+        text.write("Press ESC to quit...")
+        text.rect.y = prev_pos + 60
+        text.rect.x = (RESOLUTION[0] / 2) - (text.rect.width / 2)
+        self.window.blit(text.image, text.rect)
         pygame.display.flip()
 
         while True:
             event = pygame.event.wait()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 return True
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return False
             elif event.type == pygame.QUIT:
                 exit()
 
-    def game_loop(self) -> bool:
+    def game_loop(self, debug: bool = False) -> bool:
         """
         The game loop : run until self.run is set to false by the "_update"
         method.
+        - debug : display the maze data in the console
         Each run, the loop display the maze and wait for user input.
         This will return a boolean:
             - True: if all the const.OBJECT are pickup,
@@ -193,6 +210,6 @@ class Game():
         self.win = False
         self.run = True
         while self.run:
-            self._draw()
+            self._draw(debug)
             self._update()
         return self.close_screen()

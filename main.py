@@ -12,13 +12,14 @@ import game
 def main(args: list):
     """Program entry point"""
     filepath = "./resources/levels/level0.lvl"  # Default value
-    if len(args) > 1:
+    debug = False
+    if len(args) > 2:
         filepath = os.path.join(os.path.dirname(__file__),
-                                args[1])
+                                args[2])
     play = True
     while play:
         the_game = game.Game(filepath)
-        play = the_game.game_loop()
+        play = the_game.game_loop(debug)
 
 
 if __name__ == "__main__":
