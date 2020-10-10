@@ -12,9 +12,9 @@ IMG_FOLDER = os.path.join(os.path.dirname(__file__), "resources", "img")
 MAZE_OBJ = {0: ("Empty", None),
             1: ("Wall", "floor-tiles-20x20.png", (20, 20, 220, 0)),
             2: ("Guard", "Gardien.png"),
-            3: ("Needle", "aiguille.png"),
-            4: ("Plastic Tube", "tube_plastique.png"),
-            5: ("Ether", "ether.png"),
+            3: ("Needle", "aiguille.png", None, (0, 0, 0)),
+            4: ("Plastic Tube", "tube_plastique.png", None, (255, 255, 255)),
+            5: ("Ether", "ether.png", None, (1, 1, 1)),
             6: ("MacGyver", "MacGyver.png"),
             7: ("Syringe", "seringue.png")}
 

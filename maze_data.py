@@ -15,7 +15,7 @@ import const
 pygame.init()
 
 
-class Drawable(pygame.sprite.Sprite):
+class Drawable():
     """Class to reprensent any drawable object on the maze"""
 
     def __init__(self, position: list = []):
@@ -24,6 +24,7 @@ class Drawable(pygame.sprite.Sprite):
         self._position = position
         self.image = None
         self.rect = []
+        self.value = ''
 
     def __repr__(self):
         """ Implement repr()"""
@@ -31,8 +32,7 @@ class Drawable(pygame.sprite.Sprite):
 
     def __str__(self):
         """Implement str()"""
-        ouput_string = "Drawable object at pos x : {} - y : {}"
-        return ouput_string.format(self._position[0], self._position[1])
+        return str(self.value)
 
     @property
     def position(self) -> tuple:
@@ -50,6 +50,7 @@ class Drawable(pygame.sprite.Sprite):
     def set_colorkey(self, color: pygame.Color):
         """Set the alpha color of the image"""
         self.image.set_colorkey(color)
+        self.image = self.image.convert_alpha()
 
     def scale(self, new_res: tuple):
         """ Rescale image to the new resolution"""
@@ -60,7 +61,10 @@ class Drawable(pygame.sprite.Sprite):
         self.image.fill(color, special_flags=flags)
 
     def load_from_file(self, file_path: str, color_key=None) -> bool:
-        """Load image from a file, if set"""
+        """
+        Load image from a file.
+        If colory_key is -1, the alpha pixel is loaded from the pixel at 0-0
+        """
         fullpath = path.join(path.dirname(__file__), file_path)
         try:
             image = pygame.image.load(file_path)
@@ -72,7 +76,7 @@ class Drawable(pygame.sprite.Sprite):
         self._image = image.convert()
         if color_key is not None:
             if color_key == -1:
-                color_key = self._image.get_at((10, 10))
+                color_key = self._image.get_at((0, 0))
             self._image.set_colorkey(color_key)
         self.rect = self._image.get_rect()
         self.image = self._image
@@ -89,7 +93,7 @@ class Drawable(pygame.sprite.Sprite):
 class MazeObject(Drawable):
     """Reprensent a case in the maze"""
 
-    def __init__(self, value: int, position: list):
+    def __init__(self, value: int, position: list = []):
         """
         Create a new MazeObject.
         - Value should be an integer reprenstig the type of case, value should
@@ -104,12 +108,14 @@ class MazeObject(Drawable):
         object_data = const.MAZE_OBJ[value]
         if object_data[1] is not None:
             self.load_from_file(path.join(const.IMG_FOLDER, object_data[1]))
-            if len(object_data) > 2:
+            if len(object_data) > 2 and object_data[2] is not None:
                 self.crop(object_data[2][0],
                           object_data[2][1],
                           object_data[2][2],
                           object_data[2][3])
                 self.scale(const.SPRITE_SIZE)
+            if len(object_data) > 3 and object_data[3] is not None:
+                self.set_colorkey(object_data[3])
         else:
             self.image = pygame.Surface(const.SPRITE_SIZE)
             self.image.fill((255, 255, 255))
@@ -118,13 +124,6 @@ class MazeObject(Drawable):
     def __repr__(self) -> str:
         """Return repr(self)."""
         return "MazeObject({}, {})".format(self._value, self.position)
-
-    def __str__(self) -> str:
-        """Return str(self)."""
-        output_string = "{} at position {} - {}"
-        return output_string.format(self._value,
-                                    self.position[0],
-                                    self.position[1])
 
     @property
     def value(self):
@@ -202,7 +201,6 @@ class Maze():
         """Constructor"""
         self.maze_data = []
         self._iterator_pos = [0, -1]
-        self.maze_group = pygame.sprite.Group()
         self.drawables = []
 
     def __str__(self):
@@ -210,7 +208,7 @@ class Maze():
         output_string = ""
         for row in self.maze_data:
             for case in row:
-                output_string += "{} ".format(case.value)
+                output_string += "{} ".format(case)
             output_string.split(' ')
             output_string += '\n'
         return output_string
@@ -275,7 +273,6 @@ class Maze():
             maze_line.append(maze_obj)
             maze_obj.rect.x = column_data[0] * const.SPRITE_SIZE[0]
             maze_obj.rect.y = row_data[0] * const.SPRITE_SIZE[1]
-            self.maze_group.add(maze_obj)
             self.drawables.append(maze_obj)
         self.maze_data.append(maze_line)
 
