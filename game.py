@@ -218,7 +218,6 @@ class Game():
             - False: Otherwise
         """
         self.start_screen()
-        self.win = False
         self.run = True
         while self.run:
             self._draw(debug)
