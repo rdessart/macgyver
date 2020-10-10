@@ -63,16 +63,16 @@ class Game():
         item_text.write("Found Items : ")
         self.main_maze.drawables.append(item_text)
 
-    def _update(self) -> None:
+    def _handle_user_input(self) -> list:
         """
-        [PROTECTED] Wait for inputs, move player, if any pickup object
-        on the ground
+        [PROTECTED] Handle user inputs, return the expected new position
+        of the player
         """
+        future_pos = copy.copy(self.player_one.position)
         event = pygame.event.wait()
         if event.type == pygame.QUIT:
             exit()
         elif event.type == pygame.KEYDOWN:
-            future_pos = copy.copy(self.player_one.position)
             if event.key == pygame.K_UP:
                 future_pos[0] -= 1
             elif event.key == pygame.K_DOWN:
@@ -81,18 +81,29 @@ class Game():
                 future_pos[1] -= 1
             elif event.key == pygame.K_RIGHT:
                 future_pos[1] += 1
-            if self.main_maze[future_pos].value in MAZE_BLOCKING:
-                return
-            if self.main_maze[future_pos].value in MAZE_PLACABLE:
-                self.player_one.pickup(self.main_maze[future_pos])
-                self.main_maze.drawables.remove(self.main_maze[future_pos])
-                self.main_maze[future_pos].value = 0
-            elif self.main_maze[future_pos].value == 2:
-                self.run = False
-            self.main_maze[self.old_pos.position] = self.old_pos
-            self.old_pos = copy.copy(self.main_maze[future_pos])
-            self.player_one.position = future_pos
-            self.main_maze[self.player_one.position] = self.player_one
+        return future_pos
+
+    def _update(self, future_pos: list) -> None:
+        """
+        [PROTECTED] Wait for inputs, move player, if any pickup object
+        on the ground
+        future_pos: the expected future position of the player
+        """
+        if self.main_maze[future_pos].value in MAZE_BLOCKING:
+            return
+
+        if self.main_maze[future_pos].value in MAZE_PLACABLE:
+            self.player_one.pickup(self.main_maze[future_pos])
+            self.main_maze.drawables.remove(self.main_maze[future_pos])
+            self.main_maze[future_pos].value = 0
+
+        elif self.main_maze[future_pos].value == 2:
+            self.run = False
+
+        self.main_maze[self.old_pos.position] = self.old_pos
+        self.old_pos = copy.copy(self.main_maze[future_pos])
+        self.player_one.position = future_pos
+        self.main_maze[self.player_one.position] = self.player_one
 
     def _draw(self, debug: bool = False) -> None:
         """
@@ -101,7 +112,7 @@ class Game():
         - display the maze and the player
         - display the player's owned items
         - display the syringe in green if we pick-up all the items, else in red
-        If debug  is set to true, the console output the display of the maze
+        If 'debug' is set to true, the console output the display of the maze
         """
         # Display the maze
         self.window.fill((0, 0, 0))
@@ -211,5 +222,6 @@ class Game():
         self.run = True
         while self.run:
             self._draw(debug)
-            self._update()
+            new_pos = self._handle_user_input()
+            self._update(new_pos)
         return self.close_screen()
