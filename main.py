@@ -9,7 +9,7 @@ import sys
 import game
 
 
-def main(args: list):
+def main(args: list) -> None:
     """Program entry point"""
     filepath = "./resources/levels/level0.lvl"  # Default value
     if len(args) > 2:

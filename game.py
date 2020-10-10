@@ -15,7 +15,7 @@ from const import MAZE_PLACABLE, RESOLUTION, SPRITE_SIZE, MAZE_BLOCKING,\
 class Game():
     """Handle the graphics, the game logic and the data loading"""
 
-    def __init__(self, maze_file: str):
+    def __init__(self, maze_file: str) -> None:
         """
         Constructor : Set all class variable, load the maze from the file
         Initialize pygame

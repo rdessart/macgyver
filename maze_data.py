@@ -18,7 +18,7 @@ pygame.init()
 class Drawable():
     """Class to reprensent any drawable object on the maze"""
 
-    def __init__(self, position: list = []):
+    def __init__(self, position: list = []) -> None:
         """Create a new drawable object, to be place at the given position."""
         super().__init__()
         self._position = position
@@ -26,11 +26,11 @@ class Drawable():
         self.rect = []
         self.value = ''
 
-    def __repr__(self):
+    def __repr__(self) -> None:
         """ Implement repr()"""
         return "Drawable({})".format(self._position)
 
-    def __str__(self):
+    def __str__(self) -> None:
         """Implement str()"""
         return str(self.value)
 
@@ -40,23 +40,23 @@ class Drawable():
         return self._position
 
     @position.setter
-    def position(self, position: list):
+    def position(self, position: list) -> None:
         """Set the position of the object as well as the rect of the image"""
         if self.rect is not None:
             self.rect.x = position[1] * const.SPRITE_SIZE[0]
             self.rect.y = position[0] * const.SPRITE_SIZE[1]
         self._position = position
 
-    def set_colorkey(self, color: pygame.Color):
+    def set_colorkey(self, color: pygame.Color) -> None:
         """Set the alpha color of the image"""
         self.image.set_colorkey(color)
         self.image = self.image.convert_alpha()
 
-    def scale(self, new_res: tuple):
+    def scale(self, new_res: tuple) -> None:
         """ Rescale image to the new resolution"""
         self.image = pygame.transform.smoothscale(self.image, new_res)
 
-    def overlay(self, color: tuple, flags=pygame.BLEND_MULT):
+    def overlay(self, color: tuple, flags=pygame.BLEND_MULT) -> None:
         """ Add a color overlay to the image"""
         self.image.fill(color, special_flags=flags)
 
@@ -82,7 +82,7 @@ class Drawable():
         self.image = self._image
         return True
 
-    def crop(self, width: int, height: int, left: int, top: int):
+    def crop(self, width: int, height: int, left: int, top: int) -> None:
         """Cut the image to fit a width * height rectangle from the data
         starting a top & left"""
         self.image = pygame.Surface([width, height])
@@ -93,7 +93,7 @@ class Drawable():
 class MazeObject(Drawable):
     """Reprensent a case in the maze"""
 
-    def __init__(self, value: int, position: list = []):
+    def __init__(self, value: int, position: list = []) -> None:
         """
         Create a new MazeObject.
         - Value should be an integer reprenstig the type of case, value should
@@ -126,7 +126,7 @@ class MazeObject(Drawable):
         return "MazeObject({}, {})".format(self._value, self.position)
 
     @property
-    def value(self):
+    def value(self) -> None:
         """Return the value of the case."""
         return self._value
 
@@ -146,7 +146,7 @@ class Player(Drawable):
     """
     Represent our player
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Constructor.
         If a maze is available we save his reference.
@@ -157,7 +157,7 @@ class Player(Drawable):
         self.load_from_file(path.join(const.IMG_FOLDER, const.MAZE_OBJ[6][1]))
         self.value = 'X'  # DEBUG
 
-    def pickup(self, maze_object: MazeObject):
+    def pickup(self, maze_object: MazeObject) -> None:
         """
         Add the item under the player to our backpack, and reset the cell
         to it's empty value (value = 0).
@@ -179,7 +179,7 @@ class Text(Drawable):
     """
     Handle Text
     """
-    def __init__(self, position: tuple = None):
+    def __init__(self, position: tuple = None) -> None:
         """ Initalise new text drawer"""
         super().__init__(None)
         self.rect = None
@@ -190,16 +190,16 @@ class Text(Drawable):
         self.position = position
 
     @staticmethod
-    def get_sys_font():
+    def get_sys_font() -> list:
         """Return all installed font"""
         return pygame.font.get_fonts()
 
-    def load_font_from_sys(self, font_name: str, size: int):
+    def load_font_from_sys(self, font_name: str, size: int) -> None:
         """Load a font from the default system fonts"""
         path_font = pygame.font.match_font(font_name)
         self.font = pygame.font.Font(path_font, size)
 
-    def write(self, text: str):
+    def write(self, text: str) -> None:
         """Write text on the surface"""
         self.image = self.font.render(text,
                                       self.anti_aliasing,
@@ -213,13 +213,13 @@ class Text(Drawable):
 class Maze():
     """Reprensente the whole maze as a 2D array"""
     # Special methods:
-    def __init__(self):
+    def __init__(self) -> None:
         """Constructor"""
         self.maze_data = []
         self._iterator_pos = [0, -1]
         self.drawables = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Implement str()"""
         output_string = ""
         for row in self.maze_data:
@@ -242,7 +242,7 @@ class Maze():
             row, column = position
         return self.maze_data[row][column]
 
-    def __setitem__(self, position, value):
+    def __setitem__(self, position, value) -> None:
         """Implement setitem(x, y) and setitem(pos)"""
         if not isinstance(position, (list, tuple)):
             row = position // len(self.maze_data)
@@ -259,7 +259,7 @@ class Maze():
         return len(self.maze_data) * len(self.maze_data[0])
 
     # Protected methods:
-    def _parse_row(self, row_data: tuple):
+    def _parse_row(self, row_data: tuple) -> None:
         """[Protected] Parse a row of the maze, input is (row_num, row_data)"""
         column_value = (char for char in row_data[1] if char != '\n')
         maze_line = []
