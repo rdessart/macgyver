@@ -12,9 +12,8 @@ import game
 def main(args: list) -> None:
     """Program entry point"""
     filepath = "./resources/levels/level0.lvl"  # Default value
-    if len(args) > 2:
-        filepath = os.path.join(os.path.dirname(__file__),
-                                args[2])
+    if len(args) > 1:
+        filepath = os.path.join(os.path.dirname(__file__), args[1])
     debug = True
     play = True
     while play:
