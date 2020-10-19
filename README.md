@@ -18,5 +18,3 @@ Be careful, for once the bad guy can shoot ;). If you get on the same location a
 ## Required Packages
 * Python 3.8 (untested below 3.8)
 * Pygame 1.9.6 (untested below 1.9.6)
-## Algorithm
-All the classes and a flow charts are availables [here](https://github.com/rdessart/macgyver/blob/develop/algorithm.pdf)
