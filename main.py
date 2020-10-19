@@ -3,7 +3,6 @@
 
 """main file"""
 
-import os
 import sys
 
 import game
@@ -11,13 +10,10 @@ import game
 
 def main(args: list) -> None:
     """Program entry point"""
-    filepath = "./resources/levels/level0.lvl"  # Default value
-    if len(args) > 1:
-        filepath = os.path.join(os.path.dirname(__file__), args[1])
-    debug = True
+    debug = False  # display the maze representation in the console
     play = True
     while play:
-        the_game = game.Game(filepath)
+        the_game = game.Game(args)
         play = the_game.game_loop(debug)
 
 

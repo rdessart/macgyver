@@ -3,24 +3,28 @@
 
 """Handle the game"""
 
+import os
 import copy
 
 import pygame
 
 from maze_data import Maze, MazeObject, Player, Text
 from const import MAZE_PLACABLE, RESOLUTION, SPRITE_SIZE, MAZE_BLOCKING,\
-                  INTRO_TEXT
+                  INTRO_TEXT, DEFAULT_MAZE_FILE
 
 
 class Game():
     """Handle the graphics, the game logic and the data loading"""
 
-    def __init__(self, maze_file: str) -> None:
+    def __init__(self, args: list) -> None:
         """
         Constructor : Set all class variable, load the maze from the file
         Initialize pygame
         Initialize the player
         """
+        filepath = DEFAULT_MAZE_FILE
+        if len(args) > 1:
+            filepath = os.path.join(os.path.dirname(__file__), args[1])
         self.main_maze = None
         self.player_one = None
         self.old_pos = None
@@ -28,7 +32,7 @@ class Game():
         self.game_status = 0
         self.run = True
         self.window = pygame.display.set_mode(RESOLUTION)
-        self._initialise_maze(maze_file)
+        self._initialise_maze(filepath)
         self._initialise_player()
         self.win = False
 
